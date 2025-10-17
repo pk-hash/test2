@@ -18,9 +18,7 @@ service:
 ingress:
   enabled: true
   className: nginx
-  annotations:
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      add_header Cache-Control "public, max-age=3600";
+  annotations: {}
   hosts:
     - host: docs.example.com
       paths:

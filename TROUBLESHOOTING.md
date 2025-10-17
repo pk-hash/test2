@@ -66,7 +66,37 @@ kubectl delete application docs-site-staging -n argocd
 kubectl apply -f argocd/applications/docs-site-staging.yaml
 ```
 
-## Issue: ConfigMap Not Found
+## Issue: Admission Webhook Denied - Snippet Directives Disabled
+
+**Symptoms:**
+- `admission webhook "validate.nginx.ingress.kubernetes.io" denied the request`
+- `nginx.ingress.kubernetes.io/configuration-snippet annotation cannot be used`
+- `Snippet directives are disabled by the Ingress administrator`
+
+**Cause:**
+The nginx ingress controller has snippet directives disabled for security reasons. Using `configuration-snippet` or `server-snippet` annotations will be rejected.
+
+**Solution:**
+Remove snippet annotations from ingress configurations:
+
+```yaml
+# WRONG - Will be rejected
+ingress:
+  annotations:
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      add_header Cache-Control "public, max-age=3600";
+
+# CORRECT - Use standard annotations
+ingress:
+  annotations: {}
+  # Or use allowed annotations like:
+  # nginx.ingress.kubernetes.io/proxy-body-size: "8m"
+  # nginx.ingress.kubernetes.io/rate-limit: "100"
+```
+
+**Note:** Cache-Control headers should be configured in the nginx container itself, not via ingress annotations. Consider using a custom nginx.conf in a ConfigMap if needed.
+
+## Issue: "Resource not found in cluster: networking.k8s.io/v1/Ingress"
 
 **Symptoms:**
 - `MountVolume.SetUp failed for volume "config": configmap "X" not found`
