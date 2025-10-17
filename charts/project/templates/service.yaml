@@ -1,23 +1,27 @@
-{{- if .Values.nats.enabled -}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "project.fullname" . }}-nats
+  name: {{ include "project.fullname" . }}
   labels:
     {{- include "project.labels" . | nindent 4 }}
-    app.kubernetes.io/component: nats
 spec:
   type: ClusterIP
   ports:
+    {{- if .Values.nginx.enabled }}
+    - port: {{ .Values.nginx.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    {{- end }}
+    {{- if .Values.nats.enabled }}
     - port: {{ .Values.nats.service.client.port }}
       targetPort: client
       protocol: TCP
-      name: client
+      name: nats-client
     - port: {{ .Values.nats.service.monitoring.port }}
       targetPort: monitoring
       protocol: TCP
-      name: monitoring
+      name: nats-monitoring
+    {{- end }}
   selector:
     {{- include "project.selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: nats
-{{- end }}

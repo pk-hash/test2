@@ -78,15 +78,10 @@ nginx:
   
   # Additional volumeMounts for nginx
   volumeMounts: []
-  
-  # Affinity for nginx pods
-  affinity: {}
 
 # NATS server configuration
 nats:
   enabled: true
-  replicaCount: 2  # Can be overridden independently
-  
   image:
     repository: nats
     pullPolicy: IfNotPresent
@@ -143,23 +138,6 @@ nats:
   
   # Additional volumeMounts for NATS
   volumeMounts: []
-  
-  # Pod annotations for NATS
-  podAnnotations: {}
-  
-  # Pod labels for NATS
-  podLabels: {}
-  
-  # Affinity for NATS pods
-  affinity: {}
-  
-  # Autoscaling for NATS (independent from nginx)
-  autoscaling:
-    enabled: false
-    minReplicas: 2
-    maxReplicas: 10
-    targetCPUUtilizationPercentage: 80
-    targetMemoryUtilizationPercentage: 80
 
 ingress:
   enabled: false

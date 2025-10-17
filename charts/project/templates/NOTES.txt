@@ -6,27 +6,18 @@
   {{- end }}
 {{- end }}
 {{- else }}
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "project.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
   
   {{- if .Values.nginx.enabled }}
-  export NGINX_POD=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "project.name" . }},app.kubernetes.io/instance={{ .Release.Name }},app.kubernetes.io/component=nginx" -o jsonpath="{.items[0].metadata.name}")
-  
   echo "Nginx is available at http://127.0.0.1:8080"
-  kubectl --namespace {{ .Release.Namespace }} port-forward $NGINX_POD 8080:{{ .Values.nginx.service.targetPort }}
-  
-  # Or access via service:
-  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "project.fullname" . }}-nginx 8080:{{ .Values.nginx.service.port }}
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:{{ .Values.nginx.service.targetPort }}
   {{- end }}
   
   {{- if .Values.nats.enabled }}
-  export NATS_POD=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "project.name" . }},app.kubernetes.io/instance={{ .Release.Name }},app.kubernetes.io/component=nats" -o jsonpath="{.items[0].metadata.name}")
-  
   echo "NATS client port is available at localhost:4222"
-  kubectl --namespace {{ .Release.Namespace }} port-forward $NATS_POD 4222:{{ .Values.nats.service.client.targetPort }}
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 4222:{{ .Values.nats.service.client.targetPort }}
   
   echo "NATS monitoring is available at http://127.0.0.1:8222"
-  kubectl --namespace {{ .Release.Namespace }} port-forward $NATS_POD 8222:{{ .Values.nats.service.monitoring.targetPort }}
-  
-  # Or access via service:
-  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "project.fullname" . }}-nats 4222:{{ .Values.nats.service.client.port }} 8222:{{ .Values.nats.service.monitoring.port }}
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8222:{{ .Values.nats.service.monitoring.targetPort }}
   {{- end }}
 {{- end }}
