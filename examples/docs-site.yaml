@@ -1,0 +1,108 @@
+# Application 2: Documentation Site
+# Usage values for base-nginx chart
+
+nameOverride: docs-site
+
+replicaCount: 2
+
+image:
+  repository: nginx
+  tag: "1.27.0-alpine"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      add_header Cache-Control "public, max-age=3600";
+  hosts:
+    - host: docs.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: docs-site-tls
+      hosts:
+        - docs.example.com
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+autoscaling:
+  enabled: false
+
+podLabels:
+  app: docs-site
+  tier: frontend
+  environment: production
+
+configMap:
+  enabled: true
+  data:
+    index.html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Documentation</title>
+          <style>
+              body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+              h1 { color: #333; }
+              .content { line-height: 1.6; }
+          </style>
+      </head>
+      <body>
+          <h1>Documentation Site</h1>
+          <div class="content">
+              <p>Welcome to our documentation site, powered by base-nginx Helm chart.</p>
+              <h2>Features</h2>
+              <ul>
+                  <li>Production-ready nginx deployment</li>
+                  <li>Security hardened</li>
+                  <li>Auto-scaling capabilities</li>
+                  <li>GitOps managed via ArgoCD</li>
+              </ul>
+          </div>
+      </body>
+      </html>
+
+volumeMounts:
+  - name: config
+    mountPath: /usr/share/nginx/html
+    readOnly: true
+
+volumes:
+  - name: config
+    configMap:
+      name: docs-site-base-nginx
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app.kubernetes.io/name
+            operator: In
+            values:
+            - base-nginx
+          - key: app
+            operator: In
+            values:
+            - docs-site
+        topologyKey: kubernetes.io/hostname
