@@ -11,7 +11,7 @@ This repository contains reusable Helm charts and ArgoCD configurations for depl
 ```
 .
 ├── argocd/             # ArgoCD configuration
-│   ├── root.yaml      # Root application (App of Apps)
+│   ├── apps.yaml      # Apps application (App of Apps)
 │   └── applications/  # Application manifests
 ├── charts/            # Reusable Helm charts
 │   └── base-nginx/   # Base nginx chart for applications
@@ -29,13 +29,13 @@ This repository contains reusable Helm charts and ArgoCD configurations for depl
 
 ### Bootstrap ArgoCD (App of Apps Pattern)
 
-Apply the root application to enable GitOps automation:
+Apply the apps application to enable GitOps automation:
 
 ```bash
-kubectl apply -f argocd/root.yaml
+kubectl apply -f argocd/apps.yaml
 ```
 
-This creates the root application which automatically manages all applications in `argocd/applications/`.
+This creates the apps application which automatically manages all applications in `argocd/applications/`.
 
 ### Using the Base Nginx Chart
 
@@ -60,7 +60,7 @@ Add an application manifest to `argocd/applications/`:
 # argocd/applications/my-app.yaml
 kubectl apply -f argocd/applications/my-app.yaml
 
-# Or let the root application auto-discover it:
+# Or let the apps application auto-discover it:
 git add argocd/applications/my-app.yaml
 git commit -m "feat(argocd): add my-app application"
 git push
@@ -201,7 +201,7 @@ Before committing changes:
 
 ## 📖 Documentation
 
-- [ArgoCD Root Application & App of Apps](argocd/applications/README.md)
+- [ArgoCD Apps Application & App of Apps](argocd/applications/README.md)
 - [Base Nginx Chart Documentation](charts/base-nginx/README.md)
 - [Copilot Instructions](.github/copilot-instructions.md)
 - [Example Configurations](examples/)

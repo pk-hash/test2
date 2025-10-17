@@ -4,20 +4,20 @@ This directory contains ArgoCD Application manifests for the App of Apps pattern
 
 ## Structure
 
-- `../root.yaml` - Root application that manages all applications in this directory
+- `../apps.yaml` - Apps application that manages all applications in this directory
 - Individual application manifests are placed in this directory
 
 ## Usage
 
-### Bootstrap ArgoCD with Root Application
+### Bootstrap ArgoCD with Apps Application
 
-Apply the root application to your cluster:
+Apply the apps application to your cluster:
 
 ```bash
-kubectl apply -f argocd/root.yaml
+kubectl apply -f argocd/apps.yaml
 ```
 
-This will create the root application which automatically manages all applications defined in this directory.
+This will create the apps application which automatically manages all applications defined in this directory.
 
 ### Adding New Applications
 
@@ -60,7 +60,7 @@ git push
 
 ## App of Apps Pattern
 
-The root application watches this directory and automatically creates/updates/deletes applications based on the manifests present here. This is known as the "App of Apps" pattern and provides:
+The apps application watches this directory and automatically creates/updates/deletes applications based on the manifests present here. This is known as the "App of Apps" pattern and provides:
 
 - Centralized application management
 - GitOps automation for all applications
