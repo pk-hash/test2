@@ -62,7 +62,7 @@ affinity:
           - key: app.kubernetes.io/name
             operator: In
             values:
-            - base-nginx
+            - project
           - key: app
             operator: In
             values:

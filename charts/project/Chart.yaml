@@ -1,0 +1,8 @@
+apiVersion: v2
+name: project
+description: Base Helm chart for project deployments with nginx and NATS - reusable across applications
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+maintainers:
+  - name: Infrastructure Team

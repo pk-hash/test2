@@ -14,7 +14,7 @@ This repository contains reusable Helm charts and ArgoCD configurations for depl
 │   ├── apps.yaml      # Apps application (App of Apps)
 │   └── applications/  # Application manifests (production + staging)
 ├── charts/            # Reusable Helm charts
-│   └── base-nginx/   # Base nginx chart for applications
+│   └── project/       # Base project chart with nginx and NATS
 ├── examples/         # Environment-specific configurations
 │   ├── production/   # Production values
 │   ├── staging/      # Staging values
@@ -40,22 +40,22 @@ kubectl apply -f argocd/apps.yaml
 
 This creates the apps application which automatically manages all applications in `argocd/applications/`.
 
-### Using the Base Nginx Chart
+### Using the Project Chart
 
 #### Quick Start
 
 ```bash
-# Install with default values
-helm install my-app charts/base-nginx
+# Install with default values (includes nginx and NATS)
+helm install my-app charts/project
 
 # Install with production values
-helm install my-app charts/base-nginx -f examples/production/api-service.yaml -n production
+helm install my-app charts/project -f examples/production/api-service.yaml -n production
 
 # Install with staging values
-helm install my-app charts/base-nginx -f examples/staging/api-service.yaml -n staging
+helm install my-app charts/project -f examples/staging/api-service.yaml -n staging
 
 # Upgrade existing deployment
-helm upgrade my-app charts/base-nginx -f my-values.yaml
+helm upgrade my-app charts/project -f my-values.yaml
 ```
 
 #### ArgoCD Deployment (Recommended)
@@ -74,7 +74,7 @@ git push
 
 See the [ArgoCD applications documentation](argocd/applications/README.md) for more details.
 
-See the [base-nginx chart documentation](charts/base-nginx/README.md) for detailed configuration options.
+See the [project chart documentation](charts/project/README.md) for detailed configuration options.
 
 ## 🌍 Environments
 
@@ -104,26 +104,38 @@ See [examples/README.md](examples/README.md) for detailed environment configurat
 
 ## 📚 Available Charts
 
-### base-nginx
+### project
 
-A production-ready, reusable Helm chart for nginx-based deployments.
+A production-ready, reusable Helm chart for deployments with nginx and NATS server.
 
 **Features:**
-- Security hardened (non-root, read-only filesystem)
+- **Nginx**: Web server for serving static content and reverse proxy
+- **NATS**: Lightweight messaging system for microservices communication
+- Security hardened (non-root users, read-only filesystem)
 - Configurable resource limits
-- Built-in health checks
+- Built-in health checks for both containers
 - Horizontal Pod Autoscaling support
-- Ingress configuration
+- Ingress configuration for nginx
 - Custom configuration via ConfigMap
+- Independently enable/disable nginx or NATS
 
 **Quick Example:**
 
 ```yaml
 # my-app-values.yaml
 replicaCount: 3
-image:
-  repository: nginx
-  tag: "1.27.0-alpine"
+
+nginx:
+  enabled: true
+  image:
+    tag: "1.27.0-alpine"
+
+nats:
+  enabled: true
+  resources:
+    limits:
+      cpu: 300m
+      memory: 384Mi
 
 ingress:
   enabled: true
@@ -193,7 +205,7 @@ This repository uses **Conventional Commits**. All commits must follow this form
 
 ```bash
 git commit -m "feat(app): add production deployment for api-service"
-git commit -m "fix(helm): correct resource limits in base-nginx"
+git commit -m "fix(helm): correct resource limits in project chart"
 git commit -m "docs(readme): update deployment procedures"
 git commit -m "chore(argocd): upgrade argocd version to 2.10.0"
 ```
@@ -212,7 +224,7 @@ git commit -m "chore(argocd): upgrade argocd version to 2.10.0"
 
 ```bash
 # Lint chart
-cd charts/base-nginx
+cd charts/project
 helm lint .
 
 # Test template rendering
@@ -234,7 +246,7 @@ Before committing changes:
 ## 📖 Documentation
 
 - [ArgoCD Apps Application & App of Apps](argocd/applications/README.md)
-- [Base Nginx Chart Documentation](charts/base-nginx/README.md)
+- [Project Chart Documentation](charts/project/README.md)
 - [Copilot Instructions](.github/copilot-instructions.md)
 - [Example Configurations](examples/)
 

@@ -2,9 +2,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "base-nginx.fullname" . }}
+  name: {{ include "project.fullname" . }}
   labels:
-    {{- include "base-nginx.labels" . | nindent 4 }}
+    {{- include "project.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -35,9 +35,9 @@ spec:
             {{- end }}
             backend:
               service:
-                name: {{ include "base-nginx.fullname" $ }}
+                name: {{ include "project.fullname" $ }}
                 port:
-                  number: {{ $.Values.service.port }}
+                  number: {{ $.Values.nginx.service.port }}
           {{- end }}
     {{- end }}
 {{- end }}

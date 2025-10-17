@@ -1,5 +1,5 @@
 # Application 1: API Service
-# Usage values for base-nginx chart
+# Usage values for project chart
 
 nameOverride: api-service
 
@@ -26,9 +26,6 @@ ingress:
         - path: /
           pathType: Prefix
   tls: []
-  #  - secretName: api-service-tls
-  #    hosts:
-  #      - api.example.com
 
 resources:
   limits:
@@ -58,16 +55,16 @@ podAnnotations:
 affinity:
   podAntiAffinity:
     preferredDuringSchedulingIgnoredDuringExecution:
-    - weight: 100
-      podAffinityTerm:
-        labelSelector:
-          matchExpressions:
-          - key: app.kubernetes.io/name
-            operator: In
-            values:
-            - base-nginx
-          - key: app
-            operator: In
-            values:
-            - api-service
-        topologyKey: kubernetes.io/hostname
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - project
+              - key: app
+                operator: In
+                values:
+                  - api-service
+          topologyKey: kubernetes.io/hostname

@@ -35,7 +35,7 @@ spec:
   source:
     repoURL: https://github.com/pk-hash/test2.git
     targetRevision: HEAD
-    path: charts/base-nginx
+    path: charts/project
     helm:
       valueFiles:
         - ../../examples/frontend-app.yaml

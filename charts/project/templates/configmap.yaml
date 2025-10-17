@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "base-nginx.fullname" . }}
+  name: {{ include "project.fullname" . }}
   labels:
-    {{- include "base-nginx.labels" . | nindent 4 }}
+    {{- include "project.labels" . | nindent 4 }}
 data:
   {{- toYaml .Values.configMap.data | nindent 2 }}
 {{- end }}

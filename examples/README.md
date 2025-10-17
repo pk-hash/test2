@@ -1,6 +1,6 @@
 # Example Values Files
 
-This directory contains environment-specific value files for deploying applications using the base-nginx chart.
+This directory contains environment-specific value files for deploying applications using the project chart.
 
 ## Directory Structure
 
@@ -48,13 +48,13 @@ examples/
 ### Deploy to Production
 
 ```bash
-helm install api-service charts/base-nginx -f examples/production/api-service.yaml -n production
+helm install api-service charts/project -f examples/production/api-service.yaml -n production
 ```
 
 ### Deploy to Staging
 
 ```bash
-helm install api-service charts/base-nginx -f examples/staging/api-service.yaml -n staging
+helm install api-service charts/project -f examples/staging/api-service.yaml -n staging
 ```
 
 ### Via ArgoCD
@@ -99,7 +99,7 @@ spec:
   source:
     repoURL: https://github.com/pk-hash/test2.git
     targetRevision: HEAD
-    path: charts/base-nginx
+    path: charts/project
     helm:
       valueFiles:
         - ../../examples/dev/api-service.yaml

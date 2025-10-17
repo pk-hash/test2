@@ -62,7 +62,7 @@ configMap:
       <body>
           <h1>Documentation Site <span class="env-badge">STAGING</span></h1>
           <div class="content">
-              <p>Welcome to our documentation site staging environment, powered by base-nginx Helm chart.</p>
+              <p>Welcome to our documentation site staging environment, powered by project Helm chart.</p>
               <h2>Features</h2>
               <ul>
                   <li>Production-ready nginx deployment</li>
@@ -95,7 +95,7 @@ affinity:
           - key: app.kubernetes.io/name
             operator: In
             values:
-            - base-nginx
+            - project
           - key: app
             operator: In
             values:
