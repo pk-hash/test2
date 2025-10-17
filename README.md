@@ -10,10 +10,13 @@ This repository contains reusable Helm charts and ArgoCD configurations for depl
 
 ```
 .
-├── charts/              # Reusable Helm charts
-│   └── base-nginx/     # Base nginx chart for applications
-├── examples/           # Example configurations and ArgoCD applications
-└── .github/            # GitHub configuration and Copilot instructions
+├── argocd/             # ArgoCD configuration
+│   ├── root.yaml      # Root application (App of Apps)
+│   └── applications/  # Application manifests
+├── charts/            # Reusable Helm charts
+│   └── base-nginx/   # Base nginx chart for applications
+├── examples/         # Example configurations
+└── .github/          # GitHub configuration and Copilot instructions
 ```
 
 ## 🚀 Getting Started
@@ -23,6 +26,16 @@ This repository contains reusable Helm charts and ArgoCD configurations for depl
 - Helm 3.x
 - kubectl configured with cluster access
 - ArgoCD installed in the cluster (for GitOps deployments)
+
+### Bootstrap ArgoCD (App of Apps Pattern)
+
+Apply the root application to enable GitOps automation:
+
+```bash
+kubectl apply -f argocd/root.yaml
+```
+
+This creates the root application which automatically manages all applications in `argocd/applications/`.
 
 ### Using the Base Nginx Chart
 
@@ -39,13 +52,21 @@ helm install my-app charts/base-nginx -f examples/frontend-app.yaml
 helm upgrade my-app charts/base-nginx -f my-values.yaml
 ```
 
-#### ArgoCD Deployment
+#### ArgoCD Deployment (Recommended)
 
-Apply an ArgoCD Application manifest:
+Add an application manifest to `argocd/applications/`:
 
 ```bash
-kubectl apply -f examples/argocd-application.yaml
+# argocd/applications/my-app.yaml
+kubectl apply -f argocd/applications/my-app.yaml
+
+# Or let the root application auto-discover it:
+git add argocd/applications/my-app.yaml
+git commit -m "feat(argocd): add my-app application"
+git push
 ```
+
+See the [ArgoCD applications documentation](argocd/applications/README.md) for more details.
 
 See the [base-nginx chart documentation](charts/base-nginx/README.md) for detailed configuration options.
 
@@ -180,6 +201,7 @@ Before committing changes:
 
 ## 📖 Documentation
 
+- [ArgoCD Root Application & App of Apps](argocd/applications/README.md)
 - [Base Nginx Chart Documentation](charts/base-nginx/README.md)
 - [Copilot Instructions](.github/copilot-instructions.md)
 - [Example Configurations](examples/)
