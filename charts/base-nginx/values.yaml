@@ -111,6 +111,16 @@ volumeMounts: []
 #   mountPath: /etc/nginx/nginx.conf
 #   subPath: nginx.conf
 
+# Nginx cache directories (required for read-only filesystem)
+# These are automatically added when securityContext.readOnlyRootFilesystem is true
+nginxCacheVolumes:
+  enabled: true
+  mounts:
+    - name: nginx-cache
+      mountPath: /var/cache/nginx
+    - name: nginx-run
+      mountPath: /var/run
+
 nodeSelector: {}
 
 tolerations: []

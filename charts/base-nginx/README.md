@@ -111,6 +111,7 @@ The chart implements security best practices:
 - Read-only root filesystem
 - Dropped all capabilities
 - No privilege escalation
+- Automatic writable volumes for nginx cache directories (/var/cache/nginx, /var/run)
 
 ## ArgoCD Integration
 
