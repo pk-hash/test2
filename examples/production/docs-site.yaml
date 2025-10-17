@@ -86,7 +86,7 @@ volumeMounts:
 volumes:
   - name: config
     configMap:
-      name: docs-site
+      name: docs-site  # Matches release name in ArgoCD
 
 affinity:
   podAntiAffinity:
