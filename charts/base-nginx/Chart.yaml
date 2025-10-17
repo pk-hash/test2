@@ -1,0 +1,8 @@
+apiVersion: v2
+name: base-nginx
+description: Base Helm chart for nginx deployments - reusable across applications
+type: application
+version: 0.1.0
+appVersion: "1.27.0"
+maintainers:
+  - name: Infrastructure Team

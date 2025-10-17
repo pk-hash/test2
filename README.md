@@ -1,0 +1,203 @@
+# Infrastructure Operations - ArgoCD
+
+GitOps repository for infrastructure and application deployments managed by ArgoCD.
+
+## 📋 Overview
+
+This repository contains reusable Helm charts and ArgoCD configurations for deploying and managing applications across Kubernetes clusters.
+
+## 📁 Repository Structure
+
+```
+.
+├── charts/              # Reusable Helm charts
+│   └── base-nginx/     # Base nginx chart for applications
+├── examples/           # Example configurations and ArgoCD applications
+└── .github/            # GitHub configuration and Copilot instructions
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Helm 3.x
+- kubectl configured with cluster access
+- ArgoCD installed in the cluster (for GitOps deployments)
+
+### Using the Base Nginx Chart
+
+#### Quick Start
+
+```bash
+# Install with default values
+helm install my-app charts/base-nginx
+
+# Install with custom values
+helm install my-app charts/base-nginx -f examples/frontend-app.yaml
+
+# Upgrade existing deployment
+helm upgrade my-app charts/base-nginx -f my-values.yaml
+```
+
+#### ArgoCD Deployment
+
+Apply an ArgoCD Application manifest:
+
+```bash
+kubectl apply -f examples/argocd-application.yaml
+```
+
+See the [base-nginx chart documentation](charts/base-nginx/README.md) for detailed configuration options.
+
+## 📚 Available Charts
+
+### base-nginx
+
+A production-ready, reusable Helm chart for nginx-based deployments.
+
+**Features:**
+- Security hardened (non-root, read-only filesystem)
+- Configurable resource limits
+- Built-in health checks
+- Horizontal Pod Autoscaling support
+- Ingress configuration
+- Custom configuration via ConfigMap
+
+**Quick Example:**
+
+```yaml
+# my-app-values.yaml
+replicaCount: 3
+image:
+  repository: nginx
+  tag: "1.27.0-alpine"
+
+ingress:
+  enabled: true
+  hosts:
+    - host: myapp.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+```
+
+## 🔄 GitOps Workflow
+
+1. **Create Feature Branch**
+   ```bash
+   git checkout -b feat/add-my-application
+   ```
+
+2. **Make Changes**
+   - Add/modify Helm values or manifests
+   - Follow conventional commit messages (see below)
+
+3. **Commit Changes**
+   ```bash
+   git add .
+   git commit -m "feat(app): add production deployment for my-service"
+   ```
+
+4. **Push and Create PR**
+   ```bash
+   git push origin feat/add-my-application
+   ```
+
+5. **Merge and Deploy**
+   - ArgoCD automatically syncs changes after merge to main
+
+## 📝 Commit Convention
+
+This repository uses **Conventional Commits**. All commits must follow this format:
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer]
+```
+
+### Types
+
+- `feat`: New feature or infrastructure addition
+- `fix`: Bug fix or configuration correction
+- `docs`: Documentation changes
+- `refactor`: Code refactoring without behavior changes
+- `chore`: Maintenance tasks, dependency updates
+- `ci`: CI/CD pipeline changes
+
+### Scopes
+
+- `app`: Application manifests
+- `cluster`: Cluster configurations
+- `argocd`: ArgoCD configurations
+- `helm`: Helm charts
+- `network`: Network policies
+- `monitoring`: Monitoring configs
+
+### Examples
+
+```bash
+git commit -m "feat(app): add production deployment for api-service"
+git commit -m "fix(helm): correct resource limits in base-nginx"
+git commit -m "docs(readme): update deployment procedures"
+git commit -m "chore(argocd): upgrade argocd version to 2.10.0"
+```
+
+## 🔒 Security Best Practices
+
+- Never commit secrets in plain text
+- Use sealed-secrets or external-secrets operator
+- All charts run with non-root users
+- Resource limits are enforced
+- Network policies should be applied per namespace
+
+## 🛠️ Development
+
+### Validating Helm Charts
+
+```bash
+# Lint chart
+cd charts/base-nginx
+helm lint .
+
+# Test template rendering
+helm template test-release . --debug
+
+# Dry run installation
+helm install --dry-run --debug test-release .
+```
+
+### Testing Changes
+
+Before committing changes:
+
+1. Validate YAML syntax
+2. Lint Helm charts
+3. Test in non-production environment
+4. Verify ArgoCD sync status
+
+## 📖 Documentation
+
+- [Base Nginx Chart Documentation](charts/base-nginx/README.md)
+- [Copilot Instructions](.github/copilot-instructions.md)
+- [Example Configurations](examples/)
+
+## 🤝 Contributing
+
+1. Follow the GitOps workflow outlined above
+2. Use conventional commits
+3. Keep changes atomic and focused
+4. Update documentation with your changes
+5. Test in non-production first
+
+## 📞 Support
+
+For issues or questions:
+- Create an issue in this repository
+- Contact the Infrastructure Team
+
+## 📄 License
+
+Internal use only - Infrastructure Team
