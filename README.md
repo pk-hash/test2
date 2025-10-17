@@ -12,10 +12,13 @@ This repository contains reusable Helm charts and ArgoCD configurations for depl
 .
 ├── argocd/             # ArgoCD configuration
 │   ├── apps.yaml      # Apps application (App of Apps)
-│   └── applications/  # Application manifests
+│   └── applications/  # Application manifests (production + staging)
 ├── charts/            # Reusable Helm charts
 │   └── base-nginx/   # Base nginx chart for applications
-├── examples/         # Example configurations
+├── examples/         # Environment-specific configurations
+│   ├── production/   # Production values
+│   ├── staging/      # Staging values
+│   └── *.yaml        # Generic examples
 └── .github/          # GitHub configuration and Copilot instructions
 ```
 
@@ -45,8 +48,11 @@ This creates the apps application which automatically manages all applications i
 # Install with default values
 helm install my-app charts/base-nginx
 
-# Install with custom values
-helm install my-app charts/base-nginx -f examples/frontend-app.yaml
+# Install with production values
+helm install my-app charts/base-nginx -f examples/production/api-service.yaml -n production
+
+# Install with staging values
+helm install my-app charts/base-nginx -f examples/staging/api-service.yaml -n staging
 
 # Upgrade existing deployment
 helm upgrade my-app charts/base-nginx -f my-values.yaml
@@ -69,6 +75,32 @@ git push
 See the [ArgoCD applications documentation](argocd/applications/README.md) for more details.
 
 See the [base-nginx chart documentation](charts/base-nginx/README.md) for detailed configuration options.
+
+## 🌍 Environments
+
+The repository supports multiple environments with different configurations:
+
+### Production (`production` namespace)
+- High availability (3 replicas minimum)
+- Aggressive autoscaling (up to 15 replicas)
+- Higher resource allocations
+- Hostnames: `*.example.com`
+
+**Applications:**
+- api-service (api.example.com)
+- docs-site (docs.example.com)
+
+### Staging (`staging` namespace)
+- Reduced resources for cost efficiency
+- Conservative autoscaling (up to 5 replicas)
+- Lower replica counts (1-2)
+- Hostnames: `*-staging.example.com`
+
+**Applications:**
+- api-service-staging (api-staging.example.com)
+- docs-site-staging (docs-staging.example.com)
+
+See [examples/README.md](examples/README.md) for detailed environment configurations.
 
 ## 📚 Available Charts
 

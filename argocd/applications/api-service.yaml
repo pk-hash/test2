@@ -14,7 +14,7 @@ spec:
     path: charts/base-nginx
     helm:
       valueFiles:
-        - ../../examples/api-service.yaml
+        - ../../examples/production/api-service.yaml
   
   destination:
     server: https://kubernetes.default.svc

@@ -1,0 +1,105 @@
+# Staging Environment: Documentation Site
+# Reduced resources for staging environment
+
+nameOverride: docs-site
+
+replicaCount: 1
+
+image:
+  repository: nginx
+  tag: "1.27.0-alpine"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      add_header Cache-Control "public, max-age=1800";
+  hosts:
+    - host: docs-staging.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+autoscaling:
+  enabled: false
+
+podLabels:
+  app: docs-site
+  tier: frontend
+  environment: staging
+
+configMap:
+  enabled: true
+  data:
+    index.html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Documentation - STAGING</title>
+          <style>
+              body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; background-color: #fff3cd; }
+              h1 { color: #856404; }
+              .content { line-height: 1.6; }
+              .env-badge { background-color: #ffc107; color: #000; padding: 5px 10px; border-radius: 3px; }
+          </style>
+      </head>
+      <body>
+          <h1>Documentation Site <span class="env-badge">STAGING</span></h1>
+          <div class="content">
+              <p>Welcome to our documentation site staging environment, powered by base-nginx Helm chart.</p>
+              <h2>Features</h2>
+              <ul>
+                  <li>Production-ready nginx deployment</li>
+                  <li>Security hardened</li>
+                  <li>Auto-scaling capabilities</li>
+                  <li>GitOps managed via ArgoCD</li>
+              </ul>
+              <p><strong>Note:</strong> This is a staging environment for testing purposes.</p>
+          </div>
+      </body>
+      </html>
+
+volumeMounts:
+  - name: config
+    mountPath: /usr/share/nginx/html
+    readOnly: true
+
+volumes:
+  - name: config
+    configMap:
+      name: docs-site
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app.kubernetes.io/name
+            operator: In
+            values:
+            - base-nginx
+          - key: app
+            operator: In
+            values:
+            - docs-site
+        topologyKey: kubernetes.io/hostname

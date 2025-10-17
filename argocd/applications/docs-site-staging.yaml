@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: docs-site
+  name: docs-site-staging
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -14,11 +14,11 @@ spec:
     path: charts/base-nginx
     helm:
       valueFiles:
-        - ../../examples/production/docs-site.yaml
+        - ../../examples/staging/docs-site.yaml
   
   destination:
     server: https://kubernetes.default.svc
-    namespace: production
+    namespace: staging
   
   syncPolicy:
     automated:
