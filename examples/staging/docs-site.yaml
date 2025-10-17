@@ -5,15 +5,53 @@ nameOverride: docs-site
 
 replicaCount: 1
 
-image:
-  repository: nginx
-  tag: "1.27.0-alpine"
-  pullPolicy: IfNotPresent
+# Enable both nginx and NATS
+nginx:
+  enabled: true
+  image:
+    repository: nginx
+    tag: "1.27.0-alpine"
+    pullPolicy: IfNotPresent
+  
+  service:
+    port: 80
+    targetPort: 80
+  
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+  
+  volumeMounts:
+    - name: config
+      mountPath: /usr/share/nginx/html
+      readOnly: true
 
-service:
-  type: ClusterIP
-  port: 80
-  targetPort: 80
+nats:
+  enabled: true
+  image:
+    repository: nats
+    tag: "2.10.20-alpine"
+    pullPolicy: IfNotPresent
+  
+  service:
+    client:
+      port: 4222
+      targetPort: 4222
+    monitoring:
+      port: 8222
+      targetPort: 8222
+  
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
 
 ingress:
   enabled: true
@@ -25,14 +63,6 @@ ingress:
         - path: /
           pathType: Prefix
   tls: []
-
-resources:
-  limits:
-    cpu: 100m
-    memory: 128Mi
-  requests:
-    cpu: 50m
-    memory: 64Mi
 
 autoscaling:
   enabled: false
@@ -62,10 +92,11 @@ configMap:
       <body>
           <h1>Documentation Site <span class="env-badge">STAGING</span></h1>
           <div class="content">
-              <p>Welcome to our documentation site staging environment, powered by project Helm chart.</p>
+              <p>Welcome to our documentation site staging environment, powered by project Helm chart with nginx and NATS.</p>
               <h2>Features</h2>
               <ul>
                   <li>Production-ready nginx deployment</li>
+                  <li>NATS messaging server for microservices</li>
                   <li>Security hardened</li>
                   <li>Auto-scaling capabilities</li>
                   <li>GitOps managed via ArgoCD</li>
@@ -74,11 +105,6 @@ configMap:
           </div>
       </body>
       </html>
-
-volumeMounts:
-  - name: config
-    mountPath: /usr/share/nginx/html
-    readOnly: true
 
 volumes:
   - name: config

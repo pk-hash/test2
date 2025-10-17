@@ -5,15 +5,48 @@ nameOverride: api-service
 
 replicaCount: 3
 
-image:
-  repository: nginx
-  tag: "1.27.0-alpine"
-  pullPolicy: IfNotPresent
+# Enable both nginx and NATS
+nginx:
+  enabled: true
+  image:
+    repository: nginx
+    tag: "1.27.0-alpine"
+    pullPolicy: IfNotPresent
+  
+  service:
+    port: 80
+    targetPort: 80
+  
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
 
-service:
-  type: ClusterIP
-  port: 80
-  targetPort: 80
+nats:
+  enabled: true
+  image:
+    repository: nats
+    tag: "2.10.20-alpine"
+    pullPolicy: IfNotPresent
+  
+  service:
+    client:
+      port: 4222
+      targetPort: 4222
+    monitoring:
+      port: 8222
+      targetPort: 8222
+  
+  resources:
+    limits:
+      cpu: 300m
+      memory: 384Mi
+    requests:
+      cpu: 150m
+      memory: 192Mi
 
 ingress:
   enabled: true
@@ -26,14 +59,6 @@ ingress:
         - path: /
           pathType: Prefix
   tls: []
-
-resources:
-  limits:
-    cpu: 500m
-    memory: 512Mi
-  requests:
-    cpu: 250m
-    memory: 256Mi
 
 autoscaling:
   enabled: true
@@ -49,7 +74,7 @@ podLabels:
 
 podAnnotations:
   prometheus.io/scrape: "true"
-  prometheus.io/port: "8080"
+  prometheus.io/port: "8222"
   prometheus.io/path: "/metrics"
 
 affinity:

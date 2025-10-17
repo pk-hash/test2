@@ -5,15 +5,53 @@ nameOverride: docs-site
 
 replicaCount: 2
 
-image:
-  repository: nginx
-  tag: "1.27.0-alpine"
-  pullPolicy: IfNotPresent
+# Enable both nginx and NATS
+nginx:
+  enabled: true
+  image:
+    repository: nginx
+    tag: "1.27.0-alpine"
+    pullPolicy: IfNotPresent
+  
+  service:
+    port: 80
+    targetPort: 80
+  
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  
+  volumeMounts:
+    - name: config
+      mountPath: /usr/share/nginx/html
+      readOnly: true
 
-service:
-  type: ClusterIP
-  port: 80
-  targetPort: 80
+nats:
+  enabled: true
+  image:
+    repository: nats
+    tag: "2.10.20-alpine"
+    pullPolicy: IfNotPresent
+  
+  service:
+    client:
+      port: 4222
+      targetPort: 4222
+    monitoring:
+      port: 8222
+      targetPort: 8222
+  
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
 
 ingress:
   enabled: true
@@ -28,14 +66,6 @@ ingress:
   #  - secretName: docs-site-tls
   #    hosts:
   #      - docs.example.com
-
-resources:
-  limits:
-    cpu: 200m
-    memory: 256Mi
-  requests:
-    cpu: 100m
-    memory: 128Mi
 
 autoscaling:
   enabled: false
@@ -64,10 +94,11 @@ configMap:
       <body>
           <h1>Documentation Site</h1>
           <div class="content">
-              <p>Welcome to our documentation site, powered by project Helm chart.</p>
+              <p>Welcome to our documentation site, powered by project Helm chart with nginx and NATS.</p>
               <h2>Features</h2>
               <ul>
                   <li>Production-ready nginx deployment</li>
+                  <li>NATS messaging server for microservices</li>
                   <li>Security hardened</li>
                   <li>Auto-scaling capabilities</li>
                   <li>GitOps managed via ArgoCD</li>
@@ -75,11 +106,6 @@ configMap:
           </div>
       </body>
       </html>
-
-volumeMounts:
-  - name: config
-    mountPath: /usr/share/nginx/html
-    readOnly: true
 
 volumes:
   - name: config
