@@ -9,19 +9,20 @@ spec:
   generators:
     - matrix:
         generators:
-          - list:
-              elements:
-                - service: api-service
-                - service: docs-site
+          - matrix:
+              generators:
+                - list:
+                    elements:
+                      - service: api-service
+                      - service: docs-site
+                - list:
+                    elements:
+                      - locale: br
+                      - locale: ph
           - list:
               elements:
                 - environment: production
                 - environment: staging
-          - list:
-              elements:
-                - locale: br
-                - locale: ph
-
   template:
     metadata:
       name: '{{ .service }}-{{ .locale }}-{{ .environment }}'
