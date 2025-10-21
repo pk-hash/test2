@@ -13,8 +13,18 @@ spec:
               generators:
                 - list:
                     elements:
-                      - service: api-service
                       - service: docs-site
+          - list:
+              elements:
+                - environment: production
+                - environment: staging
+    - matrix:
+        generators:
+          - matrix:
+              generators:
+                - list:
+                    elements:
+                      - service: api-service
                 - list:
                     elements:
                       - locale: br
@@ -25,7 +35,7 @@ spec:
                 - environment: staging
   template:
     metadata:
-      name: "{{ .service }}-{{ .locale }}-{{ .environment }}"
+      name: "{{ .service }}{{ if .locale}}-{{ .locale }}{{ end }}-{{ .environment }}"
       finalizers:
         - resources-finalizer.argocd.argoproj.io
     spec:
