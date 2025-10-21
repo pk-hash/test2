@@ -9,16 +9,16 @@ spec:
   generators:
     - list:
         elements:
-          - service: api-service
+          - service: api-service.com
             environment: production
             namespace: production
-          - service: api-service
+          - service: api-service.com
             environment: staging
             namespace: staging
-          - service: docs-site
+          - service: docs-site.com
             environment: production
             namespace: production
-          - service: docs-site
+          - service: docs-site.com
             environment: staging
             namespace: staging
   template:
@@ -28,7 +28,7 @@ spec:
         - resources-finalizer.argocd.argoproj.io
     spec:
       project: default
-      
+
       source:
         repoURL: https://github.com/pk-hash/test2.git
         targetRevision: HEAD
@@ -36,11 +36,11 @@ spec:
         helm:
           valueFiles:
             - '../../examples/{{ .environment }}/{{ .service }}.yaml'
-      
+
       destination:
         server: https://kubernetes.default.svc
         namespace: '{{ .namespace }}'
-      
+
       syncPolicy:
         automated:
           prune: true
@@ -55,5 +55,5 @@ spec:
             duration: 5s
             factor: 2
             maxDuration: 3m
-      
+
       revisionHistoryLimit: 10
