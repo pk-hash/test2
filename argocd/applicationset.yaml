@@ -11,6 +11,7 @@ spec:
         elements:
           - service: api-service
           - services: docs-site
+    - list:
         elements:
           - environment: production
           - environment: staging
