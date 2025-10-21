@@ -3,7 +3,7 @@
 
 nameOverride: docs-site
 
-replicaCount: 2
+replicaCount: 3
 
 # Enable both nginx and NATS
 nginx:
@@ -12,11 +12,11 @@ nginx:
     repository: nginx
     tag: "1.27.0-alpine"
     pullPolicy: IfNotPresent
-  
+
   service:
     port: 80
     targetPort: 80
-  
+
   resources:
     limits:
       cpu: 200m
@@ -24,7 +24,7 @@ nginx:
     requests:
       cpu: 100m
       memory: 128Mi
-  
+
   volumeMounts:
     - name: config
       mountPath: /usr/share/nginx/html
@@ -36,7 +36,7 @@ nats:
     repository: nats
     tag: "2.10.20-alpine"
     pullPolicy: IfNotPresent
-  
+
   service:
     client:
       port: 4222
@@ -44,7 +44,7 @@ nats:
     monitoring:
       port: 8222
       targetPort: 8222
-  
+
   resources:
     limits:
       cpu: 200m
