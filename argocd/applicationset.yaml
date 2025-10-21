@@ -1,0 +1,59 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: services
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - list:
+        elements:
+          - service: api-service
+            environment: production
+            namespace: production
+          - service: api-service
+            environment: staging
+            namespace: staging
+          - service: docs-site
+            environment: production
+            namespace: production
+          - service: docs-site
+            environment: staging
+            namespace: staging
+  template:
+    metadata:
+      name: '{{ .service }}-{{ if eq .environment "production" }}prod{{ else }}{{ .environment }}{{ end }}'
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+      
+      source:
+        repoURL: https://github.com/pk-hash/test2.git
+        targetRevision: HEAD
+        path: charts/project
+        helm:
+          valueFiles:
+            - '../../examples/{{ .environment }}/{{ .service }}.yaml'
+      
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{ .namespace }}'
+      
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+          allowEmpty: false
+        syncOptions:
+          - CreateNamespace=true
+          - PrunePropagationPolicy=foreground
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m
+      
+      revisionHistoryLimit: 10

@@ -11,7 +11,9 @@ spec:
   source:
     repoURL: https://github.com/pk-hash/test2.git
     targetRevision: HEAD
-    path: argocd/applications
+    path: argocd
+    directory:
+      include: 'applicationset.yaml'
   
   destination:
     server: https://kubernetes.default.svc
