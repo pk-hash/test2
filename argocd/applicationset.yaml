@@ -9,16 +9,16 @@ spec:
   generators:
     - list:
         elements:
-          - service: api-service.com
+          - service: api-service
             environment: production
             namespace: production
-          - service: api-service.com
+          - service: api-service
             environment: staging
             namespace: staging
-          - service: docs-site.com
+          - service: docs-site
             environment: production
             namespace: production
-          - service: docs-site.com
+          - service: docs-site
             environment: staging
             namespace: staging
   template:
