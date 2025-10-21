@@ -17,9 +17,14 @@ spec:
               elements:
                 - environment: production
                 - environment: staging
+          - list:
+              elements:
+                - locale: br
+                - locale: ph
+
   template:
     metadata:
-      name: '{{ .service }}-{{ .environment }}'
+      name: '{{ .service }}-{{ .locale }}-{{ .environment }}'
       finalizers:
         - resources-finalizer.argocd.argoproj.io
     spec:
