@@ -14,10 +14,6 @@ spec:
                 - list:
                     elements:
                       - service: docs-site
-          - list:
-              elements:
-                - environment: production
-                - environment: staging
     - matrix:
         generators:
           - matrix:
@@ -29,10 +25,10 @@ spec:
                     elements:
                       - locale: br
                       - locale: ph
-          - list:
-              elements:
-                - environment: production
-                - environment: staging
+    - list:
+        elements:
+          - environment: production
+          - environment: staging
   template:
     metadata:
       name: "{{ .service }}{{ if .locale}}-{{ .locale }}{{ end }}-{{ .environment }}"
