@@ -10,7 +10,7 @@ spec:
     - list:
         elements:
           - service: api-service
-          - services: docs-site
+          - service: docs-site
     - list:
         elements:
           - environment: production
