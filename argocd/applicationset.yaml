@@ -16,6 +16,7 @@ spec:
                 - service: api-service
                   locale: ph
                 - service: docs-site
+                  locale: ""
           - list:
               elements:
                 - environment: production
