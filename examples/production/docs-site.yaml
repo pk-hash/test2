@@ -110,7 +110,7 @@ configMap:
 volumes:
   - name: config
     configMap:
-      name: docs-site  # Matches release name in ArgoCD
+      name: '{{ include "project.fullname" . }}'
 
 affinity:
   podAntiAffinity:
