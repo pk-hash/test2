@@ -29,7 +29,7 @@ spec:
       http:
         paths:
           {{- range .paths }}
-          - path: {{ .path }}
+          - path: {{ if $.Values.locale }}{{ printf "/%s%s" $.Values.locale .path }}{{ else }}{{ .path }}{{ end }}
             {{- with .pathType }}
             pathType: {{ . }}
             {{- end }}

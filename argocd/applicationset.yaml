@@ -25,7 +25,7 @@ spec:
                 - environment: staging
   template:
     metadata:
-      name: '{{ .service }}-{{ .locale }}-{{ .environment }}'
+      name: "{{ .service }}-{{ .locale }}-{{ .environment }}"
       finalizers:
         - resources-finalizer.argocd.argoproj.io
     spec:
@@ -36,12 +36,15 @@ spec:
         targetRevision: HEAD
         path: charts/project
         helm:
+          parameters:
+            - name: locale
+              value: "{{ .locale }}"
           valueFiles:
-            - '../../examples/{{ .environment }}/{{ .service }}.yaml'
+            - "../../examples/{{ .environment }}/{{ .service }}.yaml"
 
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{ .environment }}'
+        namespace: "{{ .environment }}"
 
       syncPolicy:
         automated:
