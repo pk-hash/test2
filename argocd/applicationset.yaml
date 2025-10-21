@@ -7,14 +7,16 @@ spec:
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]
   generators:
-    - list:
-        elements:
-          - service: api-service
-          - service: docs-site
-    - list:
-        elements:
-          - environment: production
-          - environment: staging
+    - matrix:
+        generators:
+          - list:
+              elements:
+                - service: api-service
+                - service: docs-site
+          - list:
+              elements:
+                - environment: production
+                - environment: staging
   template:
     metadata:
       name: '{{ .service }}-{{ .environment }}'
