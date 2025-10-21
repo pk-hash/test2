@@ -77,6 +77,11 @@ spec:
         - name: nginx-run
           emptyDir: {}
         {{- end }}
+        {{- if .Values.configMap.enabled }}
+        - name: config
+          configMap:
+            name: {{ include "project.fullname" . }}
+        {{- end }}
         {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

@@ -106,11 +106,6 @@ configMap:
       </body>
       </html>
 
-volumes:
-  - name: config
-    configMap:
-      name: '{{ include "project.fullname" . }}'
-
 affinity:
   podAntiAffinity:
     preferredDuringSchedulingIgnoredDuringExecution:
